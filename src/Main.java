@@ -11,6 +11,8 @@ public class Main {
         incrementThread.join();
         decrementThread.join();
 
-        System.out.println("Final counter value: " + counter.getCount());
+        System.out.println("Final counter value (sync block): " + counter.getCount());
+        System.out.println("Final counter value (sync method): " + counter.getCount_1());
+        System.out.println("Final counter value (ReentrantLock): " + counter.getCount_2());
     }
 }
