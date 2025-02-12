@@ -1,9 +1,10 @@
-// BallThread.java
 public class BallThread extends Thread {
     private Ball b;
+    private BallCanvas canvas;
 
-    public BallThread(Ball ball) {
-        b = ball;
+    public BallThread(Ball ball, BallCanvas canvas) {
+        this.b = ball;
+        this.canvas = canvas;
     }
 
     @Override
@@ -11,7 +12,12 @@ public class BallThread extends Thread {
         try {
             for (int i = 1; i < 10000; i++) {
                 b.move();
-                System.out.println("Thread name = " + Thread.currentThread().getName());
+
+                if (b.isInPocket()) {
+                    canvas.ballInPocket();
+                    break;
+                }
+
                 Thread.sleep(5);
             }
         } catch (InterruptedException ex) {

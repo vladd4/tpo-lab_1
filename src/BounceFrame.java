@@ -1,4 +1,3 @@
-// BounceFrame.java
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -28,7 +27,7 @@ public class BounceFrame extends JFrame {
                 Ball b = new Ball(canvas);
                 canvas.add(b);
 
-                BallThread thread = new BallThread(b);
+                BallThread thread = new BallThread(b, canvas);
                 thread.start();
                 System.out.println("Thread name = " + thread.getName());
             }

@@ -10,6 +10,7 @@ class Ball {
     private int y = 0;
     private int dx = 2;
     private int dy = 2;
+    private boolean isInPocket = false;
 
     public Ball(Component c) {
         this.canvas = c;
@@ -29,8 +30,16 @@ class Ball {
     }
 
     public void move() {
+        if (isInPocket) return;
+
         x += dx;
         y += dy;
+
+        if (Math.pow(x - 225, 2) + Math.pow(y - 175, 2) <= Math.pow(25, 2)) {
+            isInPocket = true;
+            this.canvas.repaint();
+        }
+
         if (x < 0) {
             x = 0;
             dx = -dx;
@@ -48,5 +57,9 @@ class Ball {
             dy = -dy;
         }
         this.canvas.repaint();
+    }
+
+    public boolean isInPocket() {
+        return isInPocket;
     }
 }
