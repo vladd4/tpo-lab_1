@@ -2,11 +2,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class BallCanvas extends JPanel {
+class BallCanvas extends JPanel {
     private ArrayList<Ball> balls = new ArrayList<>();
 
     public void add(Ball b) {
         this.balls.add(b);
+    }
+
+    public void clear() {
+        this.balls.clear();
+        repaint();
     }
 
     @Override

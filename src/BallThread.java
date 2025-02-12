@@ -1,18 +1,21 @@
-public class BallThread extends Thread {
+class BallThread extends Thread {
     private Ball b;
-    private BallCanvas canvas;
+    private static final int BOUNCE_LIMIT = 5;
+    private int bounceCount = 0;
 
-    public BallThread(Ball ball, BallCanvas canvas) {
+    public BallThread(Ball ball) {
         this.b = ball;
-        this.canvas = canvas;
     }
 
     @Override
     public void run() {
         try {
-            for (int i = 1; i < 10000; i++) {
+            while (bounceCount < BOUNCE_LIMIT) {
                 b.move();
-                Thread.sleep(10);
+                if (b.hasJustBounced()) {
+                    bounceCount++;
+                }
+                Thread.sleep(5);
             }
         } catch (InterruptedException ex) {
             ex.printStackTrace();

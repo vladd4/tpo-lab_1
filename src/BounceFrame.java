@@ -1,11 +1,13 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.util.ArrayList;
 
-public class BounceFrame extends JFrame {
+class BounceFrame extends JFrame {
     private BallCanvas canvas;
     private static final int WIDTH = 450;
-    private static final int HEIGHT = 350;
+    private static final int HEIGHT = 450;
+    private ArrayList<BallThread> ballThreads = new ArrayList<>();
+    private JLabel statusLabel;
 
     public BounceFrame() {
         this.setSize(WIDTH, HEIGHT);
@@ -18,36 +20,70 @@ public class BounceFrame extends JFrame {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.lightGray);
 
+        statusLabel = new JLabel("Status: Ready");
+        buttonPanel.add(statusLabel);
+
         JButton buttonStart = new JButton("Start");
         JButton buttonStop = new JButton("Stop");
 
-        buttonStart.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Створення кульок
-                Ball redBall = new Ball(canvas, Color.RED);
-                canvas.add(redBall);
-                BallThread redBallThread = new BallThread(redBall, canvas);
+        buttonStart.addActionListener(e -> {
+            buttonStart.setEnabled(false);
+            canvas.clear();
+            ballThreads.clear();
 
-                Ball blueBall = new Ball(canvas, Color.BLUE);
-                canvas.add(blueBall);
-                BallThread blueBallThread = new BallThread(blueBall, canvas);
+            new Thread(() -> {
+                try {
+                    for (int i = 0; i < 5; i++) {
+                        final int ballNumber = i + 1;
+                        SwingUtilities.invokeLater(() ->
+                                statusLabel.setText("Spawning ball " + ballNumber)
+                        );
 
-                // Запуск потоків
-                redBallThread.start();
-                blueBallThread.start();
-            }
+                        Ball ball = new Ball(canvas, getBallColor(i));
+                        canvas.add(ball);
+                        BallThread ballThread = new BallThread(ball);
+                        ballThreads.add(ballThread);
+                        ballThread.start();
+
+                        Thread.sleep(200);
+                    }
+
+                    for (int i = 0; i < ballThreads.size(); i++) {
+                        final int threadNumber = i + 1;
+                        SwingUtilities.invokeLater(() ->
+                                statusLabel.setText("Waiting for ball " + threadNumber + " to finish")
+                        );
+
+                        ballThreads.get(i).join();
+                        System.out.println("Ball " + threadNumber + " joined");
+                    }
+
+                    SwingUtilities.invokeLater(() -> {
+                        statusLabel.setText("All balls finished!");
+                        buttonStart.setEnabled(true);
+                    });
+
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+            }).start();
         });
 
-        buttonStop.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
+        buttonStop.addActionListener(e -> System.exit(0));
 
         buttonPanel.add(buttonStart);
         buttonPanel.add(buttonStop);
         content.add(buttonPanel, BorderLayout.SOUTH);
+    }
+
+    private Color getBallColor(int index) {
+        switch (index) {
+            case 0: return Color.RED;
+            case 1: return Color.BLUE;
+            case 2: return Color.GREEN;
+            case 3: return Color.YELLOW;
+            case 4: return Color.PINK;
+            default: return Color.BLACK;
+        }
     }
 }
