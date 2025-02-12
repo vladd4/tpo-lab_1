@@ -1,10 +1,16 @@
-import javax.swing.*;
-
 public class Main {
-    public static void main(String[] args) {
-        BounceFrame frame = new BounceFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-        System.out.println("Thread name = " + Thread.currentThread().getName());
+    public static void main(String[] args) throws InterruptedException {
+        Counter counter = new Counter();
+
+        CounterThread incrementThread = new CounterThread(counter, true);
+        CounterThread decrementThread = new CounterThread(counter, false);
+
+        incrementThread.start();
+        decrementThread.start();
+
+        incrementThread.join();
+        decrementThread.join();
+
+        System.out.println("Final counter value: " + counter.getCount());
     }
 }
