@@ -2,6 +2,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+
 class BounceFrame extends JFrame {
     private BallCanvas canvas;
     private static final int WIDTH = 450;
@@ -43,19 +47,16 @@ class BounceFrame extends JFrame {
                         canvas.add(ball);
                         BallThread ballThread = new BallThread(ball);
                         ballThreads.add(ballThread);
+
                         ballThread.start();
 
-                        Thread.sleep(200);
-                    }
+                        ballThread.join();
 
-                    for (int i = 0; i < ballThreads.size(); i++) {
-                        final int threadNumber = i + 1;
                         SwingUtilities.invokeLater(() ->
-                                statusLabel.setText("Waiting for ball " + threadNumber + " to finish")
+                                statusLabel.setText("Ball " + ballNumber + " finished!")
                         );
 
-                        ballThreads.get(i).join();
-                        System.out.println("Ball " + threadNumber + " joined");
+                        System.out.println("Ball " + ballNumber + " finished.");
                     }
 
                     SwingUtilities.invokeLater(() -> {
